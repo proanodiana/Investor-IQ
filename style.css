@@ -1,0 +1,164 @@
+/* -------------------------------
+   Particle Background
+---------------------------------*/
+#particle-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* behind all content */
+  pointer-events: none; /* allows clicks to pass through */
+  background: #14141f; /* fallback background color */
+}
+
+/* -------------------------------
+   General Page Styles
+---------------------------------*/
+body {
+font-family: Arial, sans-serif;
+color: #333;
+text-align: center;
+background-image: url('assetss/stockbackground.jpg'); /* DONT FORGET TO CORRECT PATH */
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+display: flex; /* enable flex layout */
+flex-direction: column; /* stack header, content, footer vertically */
+min-height: 100vh; /* fill the viewport height */
+}
+
+header {
+  position: relative;
+  z-index: 1;
+  background: #1f1f2e;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #ffffff;
+}
+
+header nav a {
+  color: #ffffff;
+  text-decoration: none;
+  margin-left: 15px;
+  font-size: 16px;
+}
+
+header nav a:hover {
+  color: #00ccff;
+}
+
+/* -------------------------------
+   Controls (Music + Volume)
+---------------------------------*/
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 10px 15px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  margin: 20px auto;
+  position: relative;
+  z-index: 2;
+  width: fit-content;
+}
+
+.controls button {
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.controls button:hover {
+  background-color: #00ccff;
+  color: #000000;
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #000000;
+  font-weight: bold;
+}
+
+
+/* -------------------------------
+   Canvas/Game Area
+---------------------------------*/
+#sketch {
+  position: relative;
+  z-index: 1; /* above particle background */
+  margin: 20px auto;
+  width: 800px;
+  height: 500px;
+  border: none;
+  border-radius: 10px;
+  background-color: transparent;
+}
+
+/* -------------------------------
+   Toolbar Styles
+---------------------------------*/
+.toolbar {
+  display: flex;
+  justify-content: center;   /* centers toolbar items horizontally */
+  gap: 15px;
+  margin: 10px auto;         /* auto margin horizontally centers the toolbar container */
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.toolbar button {
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.toolbar button:hover {
+  background-color: #00ccff;
+  color: #000000;
+}
+
+.toolbar label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#text-size, #text-color {
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+/* -------------------------------
+   Footer
+---------------------------------*/
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #1f1f2e;
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  font-size: 14px;
+}
