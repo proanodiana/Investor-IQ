@@ -35,7 +35,7 @@ let questionScores = [
 ];
 
 let endingMessages = [
-  { main: "Do More Research Before Investing!", sub: "You have the motivation. All you need now is to learn more about the business world and you'll be ready to try again." },
+  { main: "Do More Research Before Investing!", sub: "You have the motivation. Learn more about the business world and you'll be ready to try again." },
   { main: "Keep At It! You're Learning.", sub: "You have the mind of an investor, just a few more steps before you're business ready." },
   { main: "Great Investor Mindset! Future VC star!", sub: "Great decision making! You really have what it takes to dominate the business world." }
 ];
@@ -46,8 +46,9 @@ function preload() {
 }
 
 function setup() {
-  let w = min(windowWidth * 0.95, 800);
-  let h = w * 10 / 16;
+  const container = document.getElementById("sketch");
+  const w = container.offsetWidth;
+  const h = w * 10 / 16; 
   const canvas = createCanvas(w, h);
   canvas.parent("sketch");
 
@@ -71,8 +72,9 @@ function setup() {
 }
 
 function windowResized() {
-  let w = min(windowWidth * 0.95, 800);
-  let h = w * 10 / 16;
+  const container = document.getElementById("sketch");
+  const w = container.offsetWidth;
+  const h = w * 10 / 16;
   resizeCanvas(w, h);
 }
 
@@ -115,7 +117,7 @@ function drawIntro(scale) {
 
   fill(textColor);
   textSize(24 * scale);
-  text("Click anywhere on the canvas to continue.", width / 2, height * 0.4);
+  text("Click inside the canvas to continue.", width / 2, height * 0.4);
 }
 
 function drawInstructions(scale) {
@@ -154,37 +156,25 @@ function drawQuestion(scale) {
 
 function drawOption(x, y, label, index, scale) {
   let optionColor = graphColor;
-  let rectW = 300 * scale;
-  let rectH = 50 * scale;
-  
-  // Hover or selected color
-  if (mouseX > x - rectW/2 && mouseX < x + rectW/2 &&
-      mouseY > y - rectH/2 && mouseY < y + rectH/2) {
+  if (mouseX > x - 150 * scale && mouseX < x + 150 * scale &&
+      mouseY > y - 25 * scale && mouseY < y + 25 * scale) {
     optionColor = '#ff9900';
   } else if (selectedOption === index) {
     optionColor = '#00ccff';
   }
-
-  // Draw rectangle
   fill(optionColor);
-  rect(x, y, rectW, rectH, 10 * scale);
-
-  // Draw text
+  rect(x, y, 300 * scale, 50 * scale, 10 * scale);
   fill(textColor);
-  let textSizeOption = rectH * 0.5; // Text is half the rect height
-  textSize(textSizeOption);
+  textSize(20 * scale);
   textAlign(CENTER, CENTER);
   text(label, x, y);
 }
 
-
 function drawNextButton(scale) {
-  let rectW = 150 * scale;
-  let rectH = 40 * scale;
   fill('#00ff00');
-  rect(width / 2, height * 0.94, rectW, rectH, 10 * scale);
+  rect(width / 2, height * 0.94, 150 * scale, 40 * scale, 10 * scale);
   fill('#070101ff');
-  textSize(rectH * 0.5);
+  textSize(20 * scale);
   textAlign(CENTER, CENTER);
   text("Next", width / 2, height * 0.94);
 }
@@ -208,12 +198,10 @@ function drawEnding(scale) {
 }
 
 function drawRestartButton(scale) {
-  let rectW = 180 * scale;
-  let rectH = 45 * scale;
   fill('#00ff00');
-  rect(width / 2, height * 0.75, rectW, rectH, 10 * scale);
+  rect(width / 2, height * 0.75, 180 * scale, 45 * scale, 10 * scale);
   fill('#fbf7f7ff');
-  textSize(rectH * 0.5);
+  textSize(20 * scale);
   textAlign(CENTER, CENTER);
   text("Restart Quiz", width / 2, height * 0.75);
 }
@@ -236,11 +224,11 @@ function mousePressed() {
   let scale = getScale();
 
   if (currentScene === "intro") {
-      if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-          currentScene = "instructions"; 
-      }
-      return;
-  }
+    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+      currentScene = "instructions"; 
+    }
+    return;
+  }  
 
   if (currentScene === "instructions") {
     if (mouseX > width / 2 - 100 * scale && mouseX < width / 2 + 100 * scale &&
