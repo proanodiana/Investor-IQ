@@ -7,7 +7,6 @@ let researchScore = 0, riskScore = 0, mindsetScore = 0;
 let scoreHistory = [];
 let currentQuestion = 0, selectedOption = -1;
 let particles = [];
-let canvas;
 
 let questions = [
   { q: "Startup has no prototype yet?", options: ["Wait for prototype", "Invest small", "Invest big"] },
@@ -35,13 +34,20 @@ let questionScores = [
   [{ research: 0, risk: 0, mindset: 10 }, { research: 5, risk: 5, mindset: 5 }, { research: 10, risk: 0, mindset: 10 }]
 ];
 
+let endingMessages = [
+  { main: "Do More Research Before Investing!", sub: "You have the motivation. All you need now is to learn more about the business world and you'll be ready to try again." },
+  { main: "Keep At It! You're Learning.", sub: "You have the mind of an investor, just a few more steps before you're business ready." },
+  { main: "Great Investor Mindset! Future VC star!", sub: "Great decision making! You really have what it takes to dominate the business world." }
+];
+
 function preload() {
   bg = loadImage('assetss/stockbackground.jpg');
   sound = loadSound('assetss/quizmusic.mp3');
 }
 
 function setup() {
-  createResponsiveCanvas();
+  const canvas = createCanvas(800, 500);
+  canvas.parent("sketch");
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   textFont("Verdana");
@@ -62,25 +68,18 @@ function setup() {
 }
 
 function windowResized() {
-  createResponsiveCanvas();
+  let w = min(windowWidth * 0.9, 800);
+  let h = w * 10 / 16;
+  resizeCanvas(w, h);
 }
 
-function createResponsiveCanvas() {
-  const container = document.getElementById("sketch");
-  const containerWidth = container.clientWidth;
-  const w = Math.min(containerWidth, 800);
-  const h = w * 10 / 16;
-
-  if (canvas) resizeCanvas(w, h);
-  else canvas = createCanvas(w, h).parent("sketch");
+function getScale() {
+  return width / 800;
 }
-
-function getScale() { return width / 800; }
 
 function draw() {
   clear();
-  const scaleFactor = getScale();
-
+  let scaleFactor = getScale();
   drawParticles(scaleFactor);
 
   if (currentScene === "question" || currentScene === "ending") drawGraph(scaleFactor);
@@ -110,6 +109,7 @@ function drawIntro(scale) {
   strokeWeight(4 * scale);
   textSize(textSizeVal * scale);
   text("Welcome to Investor IQ!", width / 2, height * 0.3);
+
   fill(textColor);
   textSize(24 * scale);
   text("Click anywhere to continue.", width / 2, height * 0.4);
@@ -119,9 +119,11 @@ function drawInstructions(scale) {
   fill(textColor);
   textSize(28 * scale);
   text("The Ultimate Test of Your Financial Instincts!", width / 2, height * 0.2);
+
   textSize(20 * scale);
   text("Can you make the right calls, balance risk and reward,", width / 2, height * 0.3);
   text("and think like a true investor?", width / 2, height * 0.35);
+
   drawStartButton(scale);
 }
 
@@ -130,11 +132,12 @@ function drawStartButton(scale) {
   rect(width / 2, height * 0.6, 200 * scale, 50 * scale, 10 * scale);
   fill('#070101ff');
   textSize(24 * scale);
+  textAlign(CENTER, CENTER);
   text("Start", width / 2, height * 0.6);
 }
 
 function drawQuestion(scale) {
-  const q = questions[currentQuestion];
+  let q = questions[currentQuestion];
   fill(textColor);
   textSize(textSizeVal * scale);
   text(q.q, width / 2, height * 0.15);
@@ -149,12 +152,16 @@ function drawQuestion(scale) {
 function drawOption(x, y, label, index, scale) {
   let optionColor = graphColor;
   if (mouseX > x - 150 * scale && mouseX < x + 150 * scale &&
-      mouseY > y - 25 * scale && mouseY < y + 25 * scale) optionColor = '#ff9900';
-  else if (selectedOption === index) optionColor = '#00ccff';
+      mouseY > y - 25 * scale && mouseY < y + 25 * scale) {
+    optionColor = '#ff9900';
+  } else if (selectedOption === index) {
+    optionColor = '#00ccff';
+  }
   fill(optionColor);
   rect(x, y, 300 * scale, 50 * scale, 10 * scale);
   fill(textColor);
   textSize(20 * scale);
+  textAlign(CENTER, CENTER);
   text(label, x, y);
 }
 
@@ -163,16 +170,35 @@ function drawNextButton(scale) {
   rect(width / 2, height * 0.94, 150 * scale, 40 * scale, 10 * scale);
   fill('#070101ff');
   textSize(20 * scale);
+  textAlign(CENTER, CENTER);
   text("Next", width / 2, height * 0.94);
 }
 
 function drawEnding(scale) {
   fill(textColor);
   textSize(28 * scale);
+  textAlign(CENTER, CENTER);
+
   let avgScore = (researchScore + riskScore + mindsetScore) / 3;
-  if (avgScore < 30) text("Do More Research Before Investing!", width / 2, height / 2);
-  else if (avgScore < 60) text("Keep At It! You're Learning.", width / 2, height / 2);
-  else text("Great Investor Mindset! Future VC star!", width / 2, height / 2);
+  let message;
+  if (avgScore < 30) message = endingMessages[0];
+  else if (avgScore < 60) message = endingMessages[1];
+  else message = endingMessages[2];
+
+  text(message.main, width / 2, height * 0.4);
+  textSize(18 * scale);
+  text(message.sub, width / 2, height * 0.55);
+
+  drawRestartButton(scale);
+}
+
+function drawRestartButton(scale) {
+  fill('#00ff00');
+  rect(width / 2, height * 0.75, 180 * scale, 45 * scale, 10 * scale);
+  fill('#fbf7f7ff');
+  textSize(20 * scale);
+  textAlign(CENTER, CENTER);
+  text("Restart Quiz", width / 2, height * 0.75);
 }
 
 function drawGraph(scale) {
@@ -190,12 +216,18 @@ function drawGraph(scale) {
 }
 
 function mousePressed() {
-  const scale = getScale();
+  let scale = getScale();
 
-  if (currentScene === "intro") { currentScene = "instructions"; return; }
-  if (currentScene === "instructions") {
+if (currentScene === "intro") {
+    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+      currentScene = "instructions"; 
+    }
+    return;
+  }  if (currentScene === "instructions") {
     if (mouseX > width / 2 - 100 * scale && mouseX < width / 2 + 100 * scale &&
-        mouseY > height * 0.55 && mouseY < height * 0.65) { currentScene = "question"; return; }
+        mouseY > height * 0.55 && mouseY < height * 0.65) {
+      currentScene = "question"; return;
+    }
   }
 
   if (currentScene === "question") {
@@ -210,7 +242,7 @@ function mousePressed() {
     if (mouseX > width / 2 - 75 * scale && mouseX < width / 2 + 75 * scale &&
         mouseY > height * 0.94 - 20 * scale && mouseY < height * 0.94 + 20 * scale &&
         selectedOption !== -1) {
-      const scores = questionScores[currentQuestion][selectedOption];
+      let scores = questionScores[currentQuestion][selectedOption];
       researchScore += scores.research;
       riskScore += scores.risk;
       mindsetScore += scores.mindset;
@@ -221,6 +253,21 @@ function mousePressed() {
       if (currentQuestion >= questions.length) currentScene = "ending";
     }
   }
+
+  if (currentScene === "ending") {
+    if (mouseX > width / 2 - 90 * scale && mouseX < width / 2 + 90 * scale &&
+        mouseY > height * 0.75 - 22.5 * scale && mouseY < height * 0.75 + 22.5 * scale) {
+      restartQuiz();
+    }
+  }
+}
+
+function restartQuiz() {
+  researchScore = 0; riskScore = 0; mindsetScore = 0;
+  scoreHistory = [];
+  currentQuestion = 0;
+  selectedOption = -1;
+  currentScene = "intro";
 }
 
 function setupControls() {
