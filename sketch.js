@@ -1,18 +1,13 @@
-let bg;
-let sound;
+let bg, sound;
 let currentScene = "intro";
 let textColor = '#ffffff';
 let textSizeVal = 50;
 let graphColor;
-let chartType = "line";
-
-// Scores and history
-let researchScore = 0;
-let riskScore = 0;
-let mindsetScore = 0;
+let researchScore = 0, riskScore = 0, mindsetScore = 0;
 let scoreHistory = [];
+let currentQuestion = 0, selectedOption = -1;
+let particles = [];
 
-// Questions
 let questions = [
   { q: "Startup has no prototype yet?", options: ["Wait for prototype", "Invest small", "Invest big"] },
   { q: "Market research incomplete?", options: ["Fund research", "Invest anyway", "Find a partner"] },
@@ -39,43 +34,202 @@ let questionScores = [
   [{ research: 0, risk: 0, mindset: 10 }, { research: 5, risk: 5, mindset: 5 }, { research: 10, risk: 0, mindset: 10 }]
 ];
 
-let currentQuestion = 0;
-let selectedOption = -1;
-
-// Particle background
-let particles = [];
-
 function preload() {
   bg = loadImage('assetss/stockbackground.jpg');
   sound = loadSound('assetss/quizmusic.mp3');
 }
 
 function setup() {
-  let canvas = createCanvas(800, 500);
+  const canvas = createCanvas(800, 500);
   canvas.parent("sketch");
-  textAlign(CENTER);
+  textAlign(CENTER, CENTER);
+  rectMode(CENTER);
   textFont("Verdana");
 
-  // Default graph color
   graphColor = color(random(255), random(255), random(255));
 
-  // Particle setup
   for (let i = 0; i < 100; i++) {
     particles.push({
-      x: random(window.innerWidth),
-      y: random(window.innerHeight),
+      x: random(width),
+      y: random(height),
       size: random(2, 6),
       speedX: random(-0.5, 0.5),
       speedY: random(-0.5, 0.5)
     });
   }
 
-  // Color generator button
+  setupControls();
+}
+
+function windowResized() {
+  let w = min(windowWidth * 0.9, 800);
+  let h = w * 10 / 16; 
+  resizeCanvas(w, h);
+}
+
+function getScale() {
+  return width / 800;
+}
+
+function draw() {
+  clear();
+  let scaleFactor = getScale();
+
+  drawParticles(scaleFactor);
+
+  if (currentScene === "question" || currentScene === "ending") drawGraph(scaleFactor);
+
+  if (currentScene === "intro") drawIntro(scaleFactor);
+  else if (currentScene === "instructions") drawInstructions(scaleFactor);
+  else if (currentScene === "question") { drawQuestion(scaleFactor); drawNextButton(scaleFactor); }
+  else if (currentScene === "ending") drawEnding(scaleFactor);
+}
+
+function drawParticles(scaleFactor) {
+  noStroke();
+  fill(255, 255, 255, 150);
+  for (let p of particles) {
+    ellipse(p.x * scaleFactor, p.y * scaleFactor, p.size * scaleFactor);
+    p.x += p.speedX;
+    p.y += p.speedY;
+    if (p.x < 0) p.x = width / scaleFactor;
+    if (p.x > width / scaleFactor) p.x = 0;
+    if (p.y < 0) p.y = height / scaleFactor;
+    if (p.y > height / scaleFactor) p.y = 0;
+  }
+}
+
+function drawIntro(scale) {
+  stroke(graphColor);
+  strokeWeight(4 * scale);
+  textSize(textSizeVal * scale);
+  text("Welcome to Investor IQ!", width / 2, height * 0.3);
+
+  fill(textColor);
+  textSize(24 * scale);
+  text("Click anywhere to continue.", width / 2, height * 0.4);
+}
+
+function drawInstructions(scale) {
+  fill(textColor);
+  textSize(28 * scale);
+  text("The Ultimate Test of Your Financial Instincts!", width / 2, height * 0.2);
+
+  textSize(20 * scale);
+  text("Can you make the right calls, balance risk and reward,", width / 2, height * 0.3);
+  text("and think like a true investor?", width / 2, height * 0.35);
+
+  drawStartButton(scale);
+}
+
+function drawStartButton(scale) {
+  fill('#00ff00');
+  rect(width / 2, height * 0.6, 200 * scale, 50 * scale, 10 * scale);
+  fill('#070101ff');
+  textSize(24 * scale);
+  text("Start", width / 2, height * 0.6);
+}
+
+function drawQuestion(scale) {
+  let q = questions[currentQuestion];
+  fill(textColor);
+  textSize(textSizeVal * scale);
+  text(q.q, width / 2, height * 0.15);
+
+  textSize(20 * scale);
+  let y = height * 0.35;
+  for (let i = 0; i < q.options.length; i++) {
+    drawOption(width / 2, y + i * 0.12 * height, q.options[i], i, scale);
+  }
+}
+
+function drawOption(x, y, label, index, scale) {
+  let optionColor = graphColor;
+  if (mouseX > x - 150 * scale && mouseX < x + 150 * scale &&
+      mouseY > y - 25 * scale && mouseY < y + 25 * scale) {
+    optionColor = '#ff9900';
+  } else if (selectedOption === index) {
+    optionColor = '#00ccff';
+  }
+  fill(optionColor);
+  rect(x, y, 300 * scale, 50 * scale, 10 * scale);
+  fill(textColor);
+  textSize(20 * scale);
+  text(label, x, y);
+}
+
+function drawNextButton(scale) {
+  fill('#00ff00');
+  rect(width / 2, height * 0.94, 150 * scale, 40 * scale, 10 * scale);
+  fill('#070101ff');
+  textSize(20 * scale);
+  text("Next", width / 2, height * 0.94);
+}
+
+function drawEnding(scale) {
+  fill(textColor);
+  textSize(28 * scale);
+  let avgScore = (researchScore + riskScore + mindsetScore) / 3;
+  if (avgScore < 30) text("Do More Research Before Investing!", width / 2, height / 2);
+  else if (avgScore < 60) text("Keep At It! You're Learning.", width / 2, height / 2);
+  else text("Great Investor Mindset! Future VC star!", width / 2, height / 2);
+}
+
+function drawGraph(scale) {
+  stroke(graphColor);
+  strokeWeight(4 * scale);
+  noFill();
+  beginShape();
+  for (let i = 0; i < scoreHistory.length; i++) {
+    let x = map(i, 0, questions.length - 1, 50 * scale, width - 50 * scale);
+    let y = map((scoreHistory[i].research + scoreHistory[i].risk + scoreHistory[i].mindset) / 3,
+                0, 100, height - 50 * scale, 50 * scale);
+    vertex(x, y);
+  }
+  endShape();
+}
+
+function mousePressed() {
+  let scale = getScale();
+
+  if (currentScene === "intro") { currentScene = "instructions"; return; }
+  if (currentScene === "instructions") {
+    if (mouseX > width / 2 - 100 * scale && mouseX < width / 2 + 100 * scale &&
+        mouseY > height * 0.55 && mouseY < height * 0.65) {
+      currentScene = "question"; return;
+    }
+  }
+
+  if (currentScene === "question") {
+    let y = height * 0.35;
+    for (let i = 0; i < 3; i++) {
+      if (mouseX > width / 2 - 150 * scale && mouseX < width / 2 + 150 * scale &&
+          mouseY > y + i * 0.12 * height - 25 * scale && mouseY < y + i * 0.12 * height + 25 * scale) {
+        selectedOption = i;
+      }
+    }
+
+    if (mouseX > width / 2 - 75 * scale && mouseX < width / 2 + 75 * scale &&
+        mouseY > height * 0.94 - 20 * scale && mouseY < height * 0.94 + 20 * scale &&
+        selectedOption !== -1) {
+      let scores = questionScores[currentQuestion][selectedOption];
+      researchScore += scores.research;
+      riskScore += scores.risk;
+      mindsetScore += scores.mindset;
+      scoreHistory.push({ research: researchScore, risk: riskScore, mindset: mindsetScore });
+
+      selectedOption = -1;
+      currentQuestion++;
+      if (currentQuestion >= questions.length) currentScene = "ending";
+    }
+  }
+}
+
+function setupControls() {
   document.getElementById('change-graph-color').addEventListener('click', () => {
     graphColor = color(random(255), random(255), random(255));
   });
 
-  // Text size slider
   const textSizeSlider = document.getElementById('text-size');
   const textSizeDisplay = document.getElementById('textSizeVal');
   textSizeSlider.addEventListener('input', () => {
@@ -83,18 +237,15 @@ function setup() {
     textSizeDisplay.textContent = textSizeVal;
   });
 
-  // Text color input
   document.getElementById('text-color').addEventListener('input', e => {
     textColor = e.target.value;
   });
 
-  // Volume slider hookup
   const vol = document.getElementById('vol');
   const volVal = document.getElementById('volVal');
   if (vol && volVal && sound) {
     sound.setVolume(parseFloat(vol.value));
     volVal.textContent = parseFloat(vol.value).toFixed(2);
-
     vol.addEventListener('input', () => {
       const v = parseFloat(vol.value);
       sound.setVolume(v);
@@ -102,194 +253,12 @@ function setup() {
     });
   }
 
-  // Play/Stop button
   const toggleSound = document.getElementById('toggle-sound');
   if (toggleSound && sound) {
     toggleSound.addEventListener('click', () => {
-      if (!sound.isPlaying()) {
-        sound.play();
-        sound.setLoop(true);
-      } else {
-        sound.stop();
-      }
+      if (!sound.isPlaying()) { sound.play(); sound.setLoop(true); }
+      else { sound.stop(); }
     });
   }
 }
 
-
-function draw() {
-  //background(20, 20, 40);
-  clear();
-  drawParticles();
-
-  if (currentScene === "question" || currentScene === "ending") drawGraph();
-
-  if (currentScene === "intro") {
-    drawIntro();
-  } else if (currentScene === "instructions") {
-    drawInstructions();
-  } else if (currentScene === "question") {
-    drawQuestion();
-    drawNextButton();
-  } else if (currentScene === "ending") {
-    drawEnding();
-  }
-}
-
-function drawParticles() {
-  noStroke();
-  fill(255, 255, 255, 150);
-  for (let p of particles) {
-    ellipse(p.x, p.y, p.size);
-    p.x += p.speedX;
-    p.y += p.speedY;
-    if (p.x < 0) p.x = width;
-    if (p.x > width) p.x = 0;
-    if (p.y < 0) p.y = height;
-    if (p.y > height) p.y = 0;
-  }
-}
-
-function drawIntro() {
-  stroke(graphColor);
-  strokeWeight(4)
-  textSize(textSizeVal);
-  text("Welcome to Investor IQ!", width / 2, 150);
-
-  fill(textColor);
-  textSize(24);
-  text("Click anywhere to continue.", width / 2, 200);
-}
-
-function drawInstructions() {
-  fill(textColor);
-  textSize(28);
-  text("The Ultimate Test of Your Financial Instincts!", width / 2, 100);
-
-  textSize(20);
-  text("Can you make the right calls, balance risk and reward,", width / 2, 150);
-  text("and think like a true investor?", width / 2, 180);
-  text("Click the Start button below to begin!", width / 2, 210);
-
-  drawStartButton();
-}
-
-function drawStartButton() {
-  fill('#00ff00');
-  rectMode(CENTER);
-  rect(width / 2, 300, 200, 50, 10);
-  fill('#070101ff');
-  textSize(24);
-  text("Start", width / 2, 308);
-}
-
-function drawQuestion() {
-  let q = questions[currentQuestion];
-  fill(textColor);
-  textSize(textSizeVal);
-  text(q.q, width / 2, 80);
-
-  textSize(20);
-  let y = 200;
-  for (let i = 0; i < q.options.length; i++) {
-    drawOption(width / 2, y + i * 80, q.options[i], i);
-  }
-}
-
-function drawOption(x, y, label, index) {
-  let optionColor = graphColor;
-  if (mouseX > x - 150 && mouseX < x + 150 && mouseY > y - 25 && mouseY < y + 25) {
-    optionColor = '#ff9900';
-  } else if (selectedOption === index) {
-    optionColor = '#00ccff';
-  }
-  fill(optionColor);
-  rectMode(CENTER);
-  rect(x, y, 300, 50, 10);
-  fill(textColor);
-  text(label, x, y + 5);
-}
-
-function drawNextButton() {
-  fill('#00ff00');
-  rectMode(CENTER);
-  rect(width / 2, 470, 150, 40, 10);
-  fill('#070101ff');
-  textSize(20);
-  text("Next", width / 2, 475);
-}
-
-function drawEnding() {
-  fill(textColor);
-  textSize(28);
-  let avgScore = (researchScore + riskScore + mindsetScore) / 3;
-  if (avgScore < 30) {
-    text("Do More Research Before Investing!", width / 2, height / 2);
-  } else if (avgScore < 60) {
-    text("Keep At It! You're Learning.", width / 2, height / 2);
-  } else {
-    text("Great Investor Mindset! Future VC star!", width / 2, height / 2);
-  }
-}
-
-function drawGraph() {
-  stroke(graphColor);
-  strokeWeight(4);
-  noFill();
-  beginShape();
-  for (let i = 0; i < scoreHistory.length; i++) {
-    let x = map(i, 0, questions.length - 1, 50, width - 50);
-    let y = map((scoreHistory[i].research + scoreHistory[i].risk + scoreHistory[i].mindset) / 3, 0, 100, height - 50, 50);
-    vertex(x, y);
-  }
-  endShape();
-}
-
-function mousePressed() {
-  // Intro -> Instructions
-  if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-    
-    if (currentScene === "intro") {
-      currentScene = "instructions";
-      return;
-    }
-
-    // Instructions -> Question
-    if (currentScene === "instructions") {
-      if (mouseX > width / 2 - 100 && mouseX < width / 2 + 100 &&
-          mouseY > 275 && mouseY < 325) {
-        currentScene = "question";
-        return;
-      }
-    }
-
-    // Question logic
-    if (currentScene === "question") {
-      let y = 200;
-      for (let i = 0; i < 3; i++) {
-        if (mouseX > width / 2 - 150 && mouseX < width / 2 + 150 &&
-            mouseY > y + i * 80 - 25 && mouseY < y + i * 80 + 25) {
-          selectedOption = i;
-        }
-      }
-
-      // Next button logic
-      if (mouseX > width / 2 - 75 && mouseX < width / 2 + 75 &&
-          mouseY > 450 && mouseY < 490 && selectedOption !== -1) {
-
-        let scores = questionScores[currentQuestion][selectedOption];
-        researchScore += scores.research;
-        riskScore += scores.risk;
-        mindsetScore += scores.mindset;
-
-        scoreHistory.push({ research: researchScore, risk: riskScore, mindset: mindsetScore });
-        selectedOption = -1;
-        currentQuestion++;
-
-        if (currentQuestion >= questions.length) {
-          currentScene = "ending";
-        }
-      }
-    }
-  }
-}
