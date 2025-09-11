@@ -1,36 +1,43 @@
-/* -------------------------------
-   Particle Background
----------------------------------*/
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#page-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('assetss/stockbackground.jpg') center center / cover no-repeat;
+  z-index: 0;
+}
+
 #particle-background {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0; /* behind all content */
-  pointer-events: none; /* allows clicks to pass through */
-  background: #14141f; /* fallback background color */
+  z-index: 1; 
+  pointer-events: none;
 }
 
-/* -------------------------------
-   General Page Styles
----------------------------------*/
 body {
-font-family: Arial, sans-serif;
-color: #333;
-text-align: center;
-background-image: url('assetss/stockbackground.jpg'); /* DONT FORGET TO CORRECT PATH */
-background-size: cover;
-background-position: center;
-background-attachment: fixed;
-display: flex; /* enable flex layout */
-flex-direction: column; /* stack header, content, footer vertically */
-min-height: 100vh; /* fill the viewport height */
+  font-family: Arial, sans-serif;
+  color: #333;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
 }
 
 header {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   background: #1f1f2e;
   padding: 15px 30px;
   display: flex;
@@ -38,26 +45,10 @@ header {
   justify-content: space-between;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 28px;
-  color: #ffffff;
-}
+header h1 { margin: 0; font-size: 28px; color: #ffffff; }
+header nav a { color: #ffffff; text-decoration: none; margin-left: 15px; font-size: 16px; }
+header nav a:hover { color: #00ccff; }
 
-header nav a {
-  color: #ffffff;
-  text-decoration: none;
-  margin-left: 15px;
-  font-size: 16px;
-}
-
-header nav a:hover {
-  color: #00ccff;
-}
-
-/* -------------------------------
-   Controls (Music + Volume)
----------------------------------*/
 .controls {
   display: flex;
   justify-content: center;
@@ -70,10 +61,10 @@ header nav a:hover {
   margin: 20px auto;
   position: relative;
   z-index: 2;
-  width: fit-content;
+  flex-wrap: wrap;
 }
 
-.controls button {
+.controls button, .toolbar button {
   background-color: #ffffff;
   color: #000000;
   border: none;
@@ -83,7 +74,7 @@ header nav a:hover {
   font-weight: bold;
 }
 
-.controls button:hover {
+.controls button:hover, .toolbar button:hover {
   background-color: #00ccff;
   color: #000000;
 }
@@ -92,73 +83,57 @@ header nav a:hover {
   display: flex;
   align-items: center;
   gap: 5px;
-  color: #000000;
   font-weight: bold;
-}
-
-
-/* -------------------------------
-   Canvas/Game Area
----------------------------------*/
-#sketch {
-  position: relative;
-  z-index: 1; /* above particle background */
-  margin: 20px auto;
-  width: 800px;
-  height: 500px;
-  border: none;
-  border-radius: 10px;
-  background-color: transparent;
-}
-
-/* -------------------------------
-   Toolbar Styles
----------------------------------*/
-.toolbar {
-  display: flex;
-  justify-content: center;   /* centers toolbar items horizontally */
-  gap: 15px;
-  margin: 10px auto;         /* auto margin horizontally centers the toolbar container */
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.toolbar button {
-  background-color: #ffffff;
-  color: #000000;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-.toolbar button:hover {
-  background-color: #00ccff;
-  color: #000000;
+  color: #000000;  
+  font-size: 16px; 
 }
 
 .toolbar label {
   display: flex;
   align-items: center;
   gap: 5px;
+  font-weight: bold;
+  color: #ffffff;
+  font-size: 16px;
 }
 
-#text-size, #text-color {
-  cursor: pointer;
-  border-radius: 4px;
+
+#sketch {
+  position: relative;
+  z-index: 3;
+  margin: 40px auto;
+  width: 90%;
+  max-width: 800px;
+  aspect-ratio: 16 / 10;
+  border: 2px solid #ffffff;
+  border-radius: 10px;
+  background-color: #02032f;
 }
 
-/* -------------------------------
-   Footer
----------------------------------*/
+.toolbar {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 10px auto;
+  align-items: center;
+  position: relative;
+  z-index: 3;
+}
+
+#text-size, #text-color { cursor: pointer; border-radius: 4px; }
+
 footer {
   text-align: center;
   padding: 15px;
   background: #1f1f2e;
   position: relative;
-  z-index: 1;
+  z-index: 2;
   color: #ffffff;
   font-size: 14px;
 }
+
+@media (max-width: 700px) {
+  .controls { flex-direction: column; width: 90%; }
+  .controls > * { width: 100%; }
+}
+
