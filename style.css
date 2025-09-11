@@ -103,7 +103,7 @@ header nav a:hover { color: #00ccff; }
   margin: 20px auto;
   width: 95%;
   max-width: 800px;
-  aspect-ratio: 16 / 10;
+  /* height is now handled by p5.js dynamically */
   border: 2px solid #ffffff;
   border-radius: 10px;
   background-color: #02032f;
