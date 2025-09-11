@@ -46,8 +46,11 @@ function preload() {
 }
 
 function setup() {
-  const canvas = createCanvas(800, 500);
+  let w = min(windowWidth * 0.95, 800);
+  let h = w * 10 / 16;
+  const canvas = createCanvas(w, h);
   canvas.parent("sketch");
+
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   textFont("Verdana");
@@ -68,7 +71,7 @@ function setup() {
 }
 
 function windowResized() {
-  let w = min(windowWidth * 0.9, 800);
+  let w = min(windowWidth * 0.95, 800);
   let h = w * 10 / 16;
   resizeCanvas(w, h);
 }
@@ -112,7 +115,7 @@ function drawIntro(scale) {
 
   fill(textColor);
   textSize(24 * scale);
-  text("Click anywhere to continue.", width / 2, height * 0.4);
+  text("Click anywhere on the canvas to continue.", width / 2, height * 0.4);
 }
 
 function drawInstructions(scale) {
@@ -218,14 +221,16 @@ function drawGraph(scale) {
 function mousePressed() {
   let scale = getScale();
 
-if (currentScene === "intro") {
-    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-      currentScene = "instructions"; 
-    }
-    return;
-  }  if (currentScene === "instructions") {
+  if (currentScene === "intro") {
+      if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+          currentScene = "instructions"; 
+      }
+      return;
+  }
+
+  if (currentScene === "instructions") {
     if (mouseX > width / 2 - 100 * scale && mouseX < width / 2 + 100 * scale &&
-        mouseY > height * 0.55 && mouseY < height * 0.65) {
+        mouseY > height * 0.55 - 25*scale && mouseY < height * 0.6 + 25*scale) {
       currentScene = "question"; return;
     }
   }
