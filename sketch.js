@@ -7,6 +7,7 @@ let researchScore = 0, riskScore = 0, mindsetScore = 0;
 let scoreHistory = [];
 let currentQuestion = 0, selectedOption = -1;
 let particles = [];
+let canvas;
 
 let questions = [
   { q: "Startup has no prototype yet?", options: ["Wait for prototype", "Invest small", "Invest big"] },
@@ -40,8 +41,7 @@ function preload() {
 }
 
 function setup() {
-  const canvas = createCanvas(800, 500);
-  canvas.parent("sketch");
+  createResponsiveCanvas();
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
   textFont("Verdana");
@@ -62,18 +62,24 @@ function setup() {
 }
 
 function windowResized() {
-  let w = min(windowWidth * 0.9, 800);
-  let h = w * 10 / 16; 
-  resizeCanvas(w, h);
+  createResponsiveCanvas();
 }
 
-function getScale() {
-  return width / 800;
+function createResponsiveCanvas() {
+  const container = document.getElementById("sketch");
+  const containerWidth = container.clientWidth;
+  const w = Math.min(containerWidth, 800);
+  const h = w * 10 / 16;
+
+  if (canvas) resizeCanvas(w, h);
+  else canvas = createCanvas(w, h).parent("sketch");
 }
+
+function getScale() { return width / 800; }
 
 function draw() {
   clear();
-  let scaleFactor = getScale();
+  const scaleFactor = getScale();
 
   drawParticles(scaleFactor);
 
@@ -85,17 +91,17 @@ function draw() {
   else if (currentScene === "ending") drawEnding(scaleFactor);
 }
 
-function drawParticles(scaleFactor) {
+function drawParticles(scale) {
   noStroke();
   fill(255, 255, 255, 150);
   for (let p of particles) {
-    ellipse(p.x * scaleFactor, p.y * scaleFactor, p.size * scaleFactor);
+    ellipse(p.x * scale, p.y * scale, p.size * scale);
     p.x += p.speedX;
     p.y += p.speedY;
-    if (p.x < 0) p.x = width / scaleFactor;
-    if (p.x > width / scaleFactor) p.x = 0;
-    if (p.y < 0) p.y = height / scaleFactor;
-    if (p.y > height / scaleFactor) p.y = 0;
+    if (p.x < 0) p.x = width / scale;
+    if (p.x > width / scale) p.x = 0;
+    if (p.y < 0) p.y = height / scale;
+    if (p.y > height / scale) p.y = 0;
   }
 }
 
@@ -104,7 +110,6 @@ function drawIntro(scale) {
   strokeWeight(4 * scale);
   textSize(textSizeVal * scale);
   text("Welcome to Investor IQ!", width / 2, height * 0.3);
-
   fill(textColor);
   textSize(24 * scale);
   text("Click anywhere to continue.", width / 2, height * 0.4);
@@ -114,11 +119,9 @@ function drawInstructions(scale) {
   fill(textColor);
   textSize(28 * scale);
   text("The Ultimate Test of Your Financial Instincts!", width / 2, height * 0.2);
-
   textSize(20 * scale);
   text("Can you make the right calls, balance risk and reward,", width / 2, height * 0.3);
   text("and think like a true investor?", width / 2, height * 0.35);
-
   drawStartButton(scale);
 }
 
@@ -131,7 +134,7 @@ function drawStartButton(scale) {
 }
 
 function drawQuestion(scale) {
-  let q = questions[currentQuestion];
+  const q = questions[currentQuestion];
   fill(textColor);
   textSize(textSizeVal * scale);
   text(q.q, width / 2, height * 0.15);
@@ -146,11 +149,8 @@ function drawQuestion(scale) {
 function drawOption(x, y, label, index, scale) {
   let optionColor = graphColor;
   if (mouseX > x - 150 * scale && mouseX < x + 150 * scale &&
-      mouseY > y - 25 * scale && mouseY < y + 25 * scale) {
-    optionColor = '#ff9900';
-  } else if (selectedOption === index) {
-    optionColor = '#00ccff';
-  }
+      mouseY > y - 25 * scale && mouseY < y + 25 * scale) optionColor = '#ff9900';
+  else if (selectedOption === index) optionColor = '#00ccff';
   fill(optionColor);
   rect(x, y, 300 * scale, 50 * scale, 10 * scale);
   fill(textColor);
@@ -190,14 +190,12 @@ function drawGraph(scale) {
 }
 
 function mousePressed() {
-  let scale = getScale();
+  const scale = getScale();
 
   if (currentScene === "intro") { currentScene = "instructions"; return; }
   if (currentScene === "instructions") {
     if (mouseX > width / 2 - 100 * scale && mouseX < width / 2 + 100 * scale &&
-        mouseY > height * 0.55 && mouseY < height * 0.65) {
-      currentScene = "question"; return;
-    }
+        mouseY > height * 0.55 && mouseY < height * 0.65) { currentScene = "question"; return; }
   }
 
   if (currentScene === "question") {
@@ -212,7 +210,7 @@ function mousePressed() {
     if (mouseX > width / 2 - 75 * scale && mouseX < width / 2 + 75 * scale &&
         mouseY > height * 0.94 - 20 * scale && mouseY < height * 0.94 + 20 * scale &&
         selectedOption !== -1) {
-      let scores = questionScores[currentQuestion][selectedOption];
+      const scores = questionScores[currentQuestion][selectedOption];
       researchScore += scores.research;
       riskScore += scores.risk;
       mindsetScore += scores.mindset;
@@ -261,4 +259,3 @@ function setupControls() {
     });
   }
 }
-
