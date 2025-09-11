@@ -1,56 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Investor IQ</title>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/addons/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Investor IQ</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/p5.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.8/lib/addons/p5.sound.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
 
-    <div id="page-background"></div>
-    <div id="particle-background"></div>
+  <div id="page-background"></div>
+  <div id="particle-background"></div>
 
-    <header>
-      <h1>Investor IQ</h1>
-      <nav>
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
-    </header>
+  <header>
+    <h1>Investor IQ</h1>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
-    <div class="controls">
-      <button id="toggle-sound">Play / Stop Music</button>
-      <label>Volume:
-        <input id="vol" type="range" min="0" max="1" step="0.01" value="0.5" />
-        <span id="volVal">0.50</span>
+  <div class="controls">
+    <button id="toggle-sound">Play / Stop Music</button>
+    <label>Volume:
+      <input id="vol" type="range" min="0" max="1" step="0.01" value="0.5" />
+      <span id="volVal">0.50</span>
+    </label>
+  </div>
+
+  <section>
+    <h2>My Final Project</h2>
+    <div id="sketch"></div>
+    
+    <div class="toolbar">
+      <button id="change-graph-color">Color Generator</button>
+      <label>Text Size:
+        <input id="text-size" type="range" min="10" max="300" value="50" />
+        <span id="textSizeVal">50</span>
+      </label>
+      <label>Text Color:
+        <input id="text-color" type="color" value="#ffffff" />
       </label>
     </div>
+  </section>
 
-    <section>
-      <h2>My Final Project</h2>
-      <div id="sketch"></div>
-      
-      <div class="toolbar">
-        <button id="change-graph-color">Color Generator</button>
-        <label>Text Size:
-          <input id="text-size" type="range" min="10" max="300" value="50" />
-          <span id="textSizeVal">50</span>
-        </label>
-        <label>Text Color:
-          <input id="text-color" type="color" value="#ffffff" />
-        </label>
-      </div>
-    </section>
+  <footer>
+    <p>© 2025 Diana Proaño</p>
+  </footer>
 
-    <footer>
-      <p>© 2025 Diana Proaño</p>
-    </footer>
-
-    <script src="sketch.js"></script>
-  </body>
+  <script src="sketch.js"></script>
+</body>
 </html>
 
