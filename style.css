@@ -97,12 +97,11 @@ header nav a:hover { color: #00ccff; }
   font-size: 16px;
 }
 
-
 #sketch {
   position: relative;
   z-index: 3;
-  margin: 40px auto;
-  width: 90%;
+  margin: 20px auto;
+  width: 95%;
   max-width: 800px;
   aspect-ratio: 16 / 10;
   border: 2px solid #ffffff;
@@ -135,4 +134,5 @@ footer {
 @media (max-width: 700px) {
   .controls { flex-direction: column; width: 90%; }
   .controls > * { width: 100%; }
+  .toolbar { flex-direction: column; gap: 10px; }
 }
