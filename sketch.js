@@ -154,25 +154,37 @@ function drawQuestion(scale) {
 
 function drawOption(x, y, label, index, scale) {
   let optionColor = graphColor;
-  if (mouseX > x - 150 * scale && mouseX < x + 150 * scale &&
-      mouseY > y - 25 * scale && mouseY < y + 25 * scale) {
+  let rectW = 300 * scale;
+  let rectH = 50 * scale;
+  
+  // Hover or selected color
+  if (mouseX > x - rectW/2 && mouseX < x + rectW/2 &&
+      mouseY > y - rectH/2 && mouseY < y + rectH/2) {
     optionColor = '#ff9900';
   } else if (selectedOption === index) {
     optionColor = '#00ccff';
   }
+
+  // Draw rectangle
   fill(optionColor);
-  rect(x, y, 300 * scale, 50 * scale, 10 * scale);
+  rect(x, y, rectW, rectH, 10 * scale);
+
+  // Draw text
   fill(textColor);
-  textSize(20 * scale);
+  let textSizeOption = rectH * 0.5; // Text is half the rect height
+  textSize(textSizeOption);
   textAlign(CENTER, CENTER);
   text(label, x, y);
 }
 
+
 function drawNextButton(scale) {
+  let rectW = 150 * scale;
+  let rectH = 40 * scale;
   fill('#00ff00');
-  rect(width / 2, height * 0.94, 150 * scale, 40 * scale, 10 * scale);
+  rect(width / 2, height * 0.94, rectW, rectH, 10 * scale);
   fill('#070101ff');
-  textSize(20 * scale);
+  textSize(rectH * 0.5);
   textAlign(CENTER, CENTER);
   text("Next", width / 2, height * 0.94);
 }
@@ -196,10 +208,12 @@ function drawEnding(scale) {
 }
 
 function drawRestartButton(scale) {
+  let rectW = 180 * scale;
+  let rectH = 45 * scale;
   fill('#00ff00');
-  rect(width / 2, height * 0.75, 180 * scale, 45 * scale, 10 * scale);
+  rect(width / 2, height * 0.75, rectW, rectH, 10 * scale);
   fill('#fbf7f7ff');
-  textSize(20 * scale);
+  textSize(rectH * 0.5);
   textAlign(CENTER, CENTER);
   text("Restart Quiz", width / 2, height * 0.75);
 }
